@@ -4,6 +4,7 @@ from fastapi import FastAPI
 import uvicorn
 
 from models.user import UserRole
+from routers.user import user_router
 
 
 
@@ -14,6 +15,7 @@ async def lifespan(_:FastAPI):
 
 
 app = FastAPI(title="Marketplace API", lifespan=lifespan)
+app.include_router(user_router)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True)
