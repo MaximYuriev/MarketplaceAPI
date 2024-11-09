@@ -10,10 +10,14 @@ def encode_jwt(
     payload: dict,
     private_key: str = PRIVATE_KEY_PATH.read_text(),
     algorithm: str = CRYPT_ALGORITHM,
-    expire_minutes: int = 15
+    expire_minutes: int = 15,
+    expire_timedelta: timedelta | None = None
 ):
     now = datetime.now(UTC)
-    expire = now + timedelta(minutes=expire_minutes)
+    if expire_timedelta is None:
+        expire = now + timedelta(minutes=expire_minutes)
+    else:
+        expire = now + expire_timedelta
     payload.update(
         exp=expire,
         iat=now
@@ -24,9 +28,10 @@ def encode_jwt(
 def decode_jwt(
     token: str | bytes,
     public_key: str = PUBLIC_KEY_PATH.read_text(),
-    algorithm: str = CRYPT_ALGORITHM
+    algorithm: str = CRYPT_ALGORITHM,
+    verify_signature: bool = True
 ):
-    return jwt.decode(token, public_key, algorithms=[algorithm])
+    return jwt.decode(token, public_key, algorithms=[algorithm], options={"verify_signature": verify_signature})
 
 
 def hash_password(password: str) -> str:
