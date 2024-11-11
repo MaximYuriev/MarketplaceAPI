@@ -4,10 +4,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from auth import utils
-from auth.config import TOKEN_TYPE_FIELD, ACCESS_TOKEN_TYPE
+from auth.config import ACCESS_TOKEN_TYPE, REFRESH_TOKEN_TYPE
 from db import get_session
 from models.user import User
-from auth.jwt import current_token_payload
+from dependencies.token import current_token_payload, current_token_payload_for_refresh
 from schemas.user import UserLogin, UserPayload
 
 
@@ -16,7 +16,9 @@ async def validate_user(user_login: UserLogin, session: AsyncSession = Depends(g
     if user is not None:
         if utils.validate_password(user_login.password, user.password):
             return user
-    raise HTTPException(400, "bad request")
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Неверный логин или пароль!")
 
 
 async def check_user_exist(payload: dict = Depends(current_token_payload),
@@ -31,7 +33,7 @@ async def check_user_exist(payload: dict = Depends(current_token_payload),
 
 
 def current_user(payload: dict = Depends(current_token_payload), user_exist: bool = Depends(check_user_exist)):
-    token_type = payload.get(TOKEN_TYPE_FIELD)
+    token_type = payload.get('type')
     if token_type != ACCESS_TOKEN_TYPE:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -45,5 +47,14 @@ def current_admin_user(payload: dict = Depends(current_token_payload), user_exis
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Нет доступа!"
+        )
+    return UserPayload.model_validate(payload, from_attributes=True)
+
+def current_user_for_refresh(payload: dict = Depends(current_token_payload_for_refresh)):
+    token_type = payload.get('type')
+    if token_type != ACCESS_TOKEN_TYPE:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Неверный тип токена: {token_type!r}! Ожидаемый тип - {ACCESS_TOKEN_TYPE !r}"
         )
     return UserPayload.model_validate(payload, from_attributes=True)
