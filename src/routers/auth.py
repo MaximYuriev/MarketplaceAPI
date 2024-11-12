@@ -2,28 +2,27 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 from jwt import InvalidTokenError
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from auth import utils
 from auth.jwt import JWT
-from db import get_session
 from dependencies.refresh_token import current_user_from_refresh_token
-from dependencies.user import validate_user
+from dependencies.user import validate_user, validate_email_unique
 from exceptions.exception import TokenNotFound
 from models.user import User
+from schemas.response import ResponseModel
 from schemas.user import UserCreate
 from services.access_token import AccessTokenServices
 from services.refresh_token import RefreshTokenServices
+from services.user import UserServices
 
 auth_router = APIRouter(prefix="/auth", tags=["Auth"])
 
 @auth_router.post("/reg")
-async def registration(user_create: UserCreate, session: AsyncSession = Depends(get_session)):
-    user_create.password = utils.hash_password(user_create.password)
-    data = user_create.model_dump()
-    user = User(**data)
-    session.add(user)
-    await session.commit()
+async def registration(
+        user_create: Annotated[UserCreate, Depends(validate_email_unique)],
+        user_services: UserServices = Depends()
+):
+    await user_services.create_user(user_create)
+    return ResponseModel(detail="Пользователь успешной зарегистрирован!")
 
 @auth_router.post("/login")
 async def login(
@@ -42,11 +41,12 @@ async def login(
         except InvalidTokenError:
             await refresh_token_services.delete_token(refresh_token)
             await refresh_token_services.create_token(user)
-    return {"detail": "Пользователь успешно авторизован!"}
+    return ResponseModel(detail="Пользователь вошел в аккаунт!")
 
 @auth_router.post("/refresh")
 async def refresh_access_token(
         user: User = Depends(current_user_from_refresh_token),
         access_token_services: AccessTokenServices = Depends()
 ):
-    return access_token_services.create_token(user)
+    access_token_services.create_token(user)
+    return ResponseModel(detail="Токен обновлен!")

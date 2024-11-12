@@ -1,6 +1,7 @@
 import uuid
 
 from fastapi import Depends
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db import get_session
@@ -13,6 +14,10 @@ class UserRepository:
 
     async def get(self, user_id: uuid.UUID | str) -> User | None:
         return await self.session.get(User, user_id)
+
+    async def get_user_by_params(self, **kwargs):
+        query = select(User).filter_by(**kwargs)
+        return await self.session.scalar(query)
 
     async def create(self, user_data: dict):
         user = User(**user_data)

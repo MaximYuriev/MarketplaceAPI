@@ -1,18 +1,15 @@
 from fastapi import Depends, HTTPException
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from auth import utils
 from auth.config import ACCESS_TOKEN_TYPE
-from db import get_session
-from models.user import User
 from dependencies.token import current_token_payload, current_token_payload_for_refresh
-from schemas.user import UserLogin, UserPayload
+from schemas.user import UserLogin, UserPayload, UserCreate
+from services.user import UserServices
 
 
-async def validate_user(user_login: UserLogin, session: AsyncSession = Depends(get_session)):
-    user = await session.scalar(select(User).where(User.email == user_login.email))
+async def validate_user(user_login: UserLogin, user_services: UserServices = Depends()):
+    user = await user_services.get_user_by_email(user_login.email)
     if user is not None:
         if utils.validate_password(user_login.password, user.password):
             return user
@@ -20,11 +17,18 @@ async def validate_user(user_login: UserLogin, session: AsyncSession = Depends(g
         status_code=status.HTTP_403_FORBIDDEN,
         detail="Неверный логин или пароль!")
 
+async def validate_email_unique(user_create: UserCreate, user_services: UserServices = Depends()):
+    if await user_services.get_user_by_email(user_create.email):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Электронная почта занята!"
+        )
+    return user_create
 
 async def check_user_exist(payload: dict = Depends(current_token_payload),
-                           session: AsyncSession = Depends(get_session)):
+                           user_services: UserServices = Depends()):
     user_id = payload.get("sub")
-    if await session.get(User, user_id) is None:
+    if await user_services.get_user_by_id(user_id) is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Токен недействителен",

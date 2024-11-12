@@ -14,7 +14,6 @@ class AccessTokenServices:
         access_token_payload = AccessTokenPayload.model_validate(user, from_attributes=True)
         token = JWT.create_jwt(access_token_payload)
         self.repository.create(token)
-        return token
 
     def get_token(self):
         token = self.repository.get()
