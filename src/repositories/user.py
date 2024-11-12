@@ -11,5 +11,15 @@ class UserRepository:
     def __init__(self, session: AsyncSession = Depends(get_session)):
         self.session = session
 
-    async def get(self, user_id: uuid.UUID) -> User | None:
+    async def get(self, user_id: uuid.UUID | str) -> User | None:
         return await self.session.get(User, user_id)
+
+    async def create(self, user_data: dict):
+        user = User(**user_data)
+        self.session.add(user)
+        await self.session.commit()
+
+    async def update(self, user: User, user_data: dict):
+        for key, value in user_data.items():
+            setattr(user, key, value)
+        await self.session.commit()
