@@ -1,13 +1,12 @@
 import uuid
 
-from fastapi import HTTPException, status, Response, Request
 from fastapi.params import Depends
 
 from auth.config import EXPIRE_TOKEN_DAYS
 from auth.jwt import JWT
+from exceptions.exception import TokenNotFound
 from models.token import RefreshToken
 from models.user import User
-from repositories.access_token import AccessTokenRepository
 from repositories.refresh_token import RefreshTokenRepository
 from schemas.token import RefreshTokenPayload
 
@@ -16,20 +15,13 @@ class RefreshTokenServices:
     def __init__(
             self,
             refresh_token_repository: RefreshTokenRepository = Depends(),
-            access_token_repository: AccessTokenRepository = Depends()
     ):
         self.refresh_repository = refresh_token_repository
-        self.access_repository = access_token_repository
 
     async def get_token(self, user_id: uuid.UUID | str):
         token = await self.refresh_repository.get(user_id)
         if token is None:
-            self.access_repository.delete()
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Пользователь не авторизован!",
-                headers=self.access_repository.response.headers
-            )
+            raise TokenNotFound
         return token
 
     async def create_token(self, user: User):

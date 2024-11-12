@@ -3,18 +3,17 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from jwt import InvalidTokenError
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette import status
 
 from auth import utils
 from auth.jwt import JWT
 from db import get_session
 from dependencies.refresh_token import current_user_from_refresh_token
-from dependencies.user import validate_user, current_user_for_refresh
+from dependencies.user import validate_user
+from exceptions.exception import TokenInvalidException, TokenNotFound
 from models.user import User
-from schemas.user import UserCreate, UserPayload
+from schemas.user import UserCreate
 from services.access_token import AccessTokenServices
 from services.refresh_token import RefreshTokenServices
-from services.user import UserServices
 
 auth_router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -35,7 +34,7 @@ async def login(
     access_token_services.create_token(user)
     try:
         refresh_token = await refresh_token_services.get_token(user.user_id)
-    except HTTPException:
+    except TokenNotFound:
         await refresh_token_services.create_token(user)
     else:
         try:
