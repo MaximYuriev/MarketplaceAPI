@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from jwt import InvalidTokenError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,7 +9,7 @@ from auth.jwt import JWT
 from db import get_session
 from dependencies.refresh_token import current_user_from_refresh_token
 from dependencies.user import validate_user
-from exceptions.exception import TokenInvalidException, TokenNotFound
+from exceptions.exception import TokenNotFound
 from models.user import User
 from schemas.user import UserCreate
 from services.access_token import AccessTokenServices

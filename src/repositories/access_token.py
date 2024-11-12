@@ -1,4 +1,4 @@
-from fastapi import Request, Response, Depends
+from fastapi import Request, Response
 
 from settings import COOKIE_KEY
 

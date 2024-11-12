@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from auth import utils
-from auth.config import ACCESS_TOKEN_TYPE, REFRESH_TOKEN_TYPE
+from auth.config import ACCESS_TOKEN_TYPE
 from db import get_session
 from models.user import User
 from dependencies.token import current_token_payload, current_token_payload_for_refresh
