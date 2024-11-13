@@ -1,9 +1,8 @@
-from fastapi import Depends, HTTPException
+from fastapi import Depends
 from jwt import InvalidTokenError
-from starlette import status
-
 
 from auth.jwt import JWT
+from exceptions.token import TokenInvalidException
 from services.access_token import AccessTokenServices
 
 
@@ -20,8 +19,5 @@ def get_token_payload(access_token_services: AccessTokenServices, refresh: bool 
     try:
         return JWT.parse_jwt(token, verify_signature=not refresh)
     except InvalidTokenError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Токен недействителен!"
-        )
+        raise TokenInvalidException
 

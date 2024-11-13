@@ -3,7 +3,7 @@ from jwt import InvalidTokenError
 
 from auth.jwt import JWT
 from dependencies.user import current_user_for_refresh
-from exceptions.exception import TokenInvalidException
+from exceptions.token import TokenInvalidException
 from models.token import RefreshToken
 from schemas.user import UserPayload
 from services.refresh_token import RefreshTokenServices

@@ -6,7 +6,7 @@ from jwt import InvalidTokenError
 from auth.jwt import JWT
 from dependencies.refresh_token import current_user_from_refresh_token
 from dependencies.user import validate_user, validate_email_unique
-from exceptions.exception import TokenNotFound
+from exceptions.token import TokenNotFound
 from models.user import User
 from schemas.response import ResponseModel
 from schemas.user import UserCreate

@@ -4,7 +4,7 @@ from fastapi.params import Depends
 
 from auth.config import EXPIRE_TOKEN_DAYS
 from auth.jwt import JWT
-from exceptions.exception import TokenNotFound
+from exceptions.token import TokenNotFound
 from models.token import RefreshToken
 from models.user import User
 from repositories.refresh_token import RefreshTokenRepository

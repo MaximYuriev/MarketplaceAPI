@@ -1,8 +1,9 @@
 import uuid
 
-from fastapi import HTTPException, status, Depends
+from fastapi import Depends
 
 from auth import utils
+from exceptions.user import UserNotFound
 from models.user import User
 from repositories.user import UserRepository
 from schemas.user import UserCreate
@@ -20,10 +21,7 @@ class UserServices:
     async def get_user_by_id(self, user_id: uuid.UUID | str) -> User:
         user = await self.repository.get(user_id)
         if user is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Пользователь не найден!"
-            )
+            raise UserNotFound
         return user
 
     async def get_user_by_email(self, email: str):

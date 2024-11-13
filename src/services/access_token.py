@@ -1,6 +1,7 @@
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 
 from auth.jwt import JWT
+from exceptions.user import UserNotAuthorized
 from models.user import User
 from repositories.access_token import AccessTokenRepository
 from schemas.token import AccessTokenPayload
@@ -18,10 +19,7 @@ class AccessTokenServices:
     def get_token(self):
         token = self.repository.get()
         if token is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Пользователь не авторизован!"
-            )
+            raise UserNotAuthorized
         return token
 
     def delete_token(self):
