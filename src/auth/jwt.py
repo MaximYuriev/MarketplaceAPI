@@ -13,7 +13,7 @@ class JWT:
             payload: BaseTokenPayload | AccessTokenPayload | RefreshTokenPayload,
             private_key: str = PRIVATE_KEY_PATH.read_text(),
             algorithm: str = CRYPT_ALGORITHM,
-            expire_minutes: int = EXPIRE_TOKEN_MINUTES,
+            expire_minutes: int | float = EXPIRE_TOKEN_MINUTES,
             expire_timedelta:  timedelta | None = None
     ):
         token_data = payload.model_dump()
