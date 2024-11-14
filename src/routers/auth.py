@@ -43,7 +43,7 @@ async def login(
             await refresh_token_services.create_token(user)
     return ResponseModel(detail="Пользователь вошел в аккаунт!")
 
-@auth_router.post("/refresh")
+@auth_router.get("/refresh")
 async def refresh_access_token(
         user: User = Depends(current_user_from_refresh_token),
         access_token_services: AccessTokenServices = Depends()
