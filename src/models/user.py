@@ -29,5 +29,6 @@ class User(Base):
     surname: Mapped[str]
     email: Mapped[str] = mapped_column(unique=True)
     password: Mapped[str]
-    user_role: Mapped[int] = mapped_column(ForeignKey(UserRole.role_id))
+    user_role: Mapped[int] = mapped_column(ForeignKey(UserRole.role_id), default=2) #По умолчанию каждый пользователь
+                                                                                    # не имеет прав администратора
 
