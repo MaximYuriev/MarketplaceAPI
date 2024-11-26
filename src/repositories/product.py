@@ -23,10 +23,11 @@ class ProductRepository:
         query = select(Product).filter_by(**kwargs)
         return await self.session.scalar(query)
 
-    async def update(self, product: Product, product_data: dict):
+    async def update(self, product: Product, product_data: dict) -> Product:
         for key, value in product_data.items():
             setattr(product, key, value)
         await self.session.commit()
+        return product
 
     async def delete(self, product: Product):
         await self.session.delete(product)
