@@ -1,7 +1,7 @@
 import uuid
 
 from sqlalchemy import String, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db import Base
 from .user import User
@@ -16,3 +16,5 @@ class Product(Base):
     quantity: Mapped[int]
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey(User.user_id))
     in_stock: Mapped[bool] = mapped_column(default=True)
+
+    added_by: Mapped["User"] = relationship()

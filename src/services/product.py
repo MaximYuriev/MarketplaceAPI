@@ -5,7 +5,7 @@ from fastapi import Depends
 from exceptions.product import ProductNotFound, ProductAlreadyExist, ProductNameNotUnique
 from models.product import Product
 from repositories.product import ProductRepository
-from schemas.product import ProductSchema, ProductUpdate
+from schemas.product import ProductSchema, ProductUpdate, ProductInfo
 
 
 class ProductServices:
@@ -13,25 +13,26 @@ class ProductServices:
         self.repository = repository
 
     async def create(self, product_create: ProductSchema, user_id: uuid.UUID | str) -> Product:
-        product = await self.get_product_by_name(product_create.name)
+        product = await self.get(name=product_create.name)
         if product:
             raise ProductAlreadyExist
         product_data = product_create.model_dump()
         product_data.update(user_id=user_id)
         return await self.repository.create(product_data)
 
-    async def get(self, product_id: int) -> Product:
-        product = await self.repository.get(product_id)
+    async def get(self, **kwargs) -> ProductInfo:
+        product = await self.repository.get(**kwargs)
         if product is None:
             raise ProductNotFound
-        return product
+        return ProductInfo.model_validate(product)
 
-    async def get_product_by_name(self, product_name: str) -> Product | None:
-        return await self.repository.get_by_params(name=product_name)
+    async def get_all_products(self, **kwargs) -> list[ProductInfo]:
+        products = await self.repository.get_all(**kwargs)
+        return [ProductInfo.model_validate(product) for product in products]
 
     async def update(self, changed_product: Product, product_update: ProductUpdate) -> Product:
         if product_update.name:
-            product = await self.get_product_by_name(product_update.name)
+            product = await self.get(name=product_update.name)
             if product:
                 raise ProductNameNotUnique
         update_product_data = product_update.model_dump(exclude_none=True)
