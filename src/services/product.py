@@ -29,3 +29,6 @@ class ProductServices:
 
     async def delete(self, deleted_product: Product):
         await self.repository.delete(deleted_product)
+
+    def __repr__(self):
+        return 'ProductService'

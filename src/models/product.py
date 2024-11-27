@@ -18,3 +18,6 @@ class Product(Base):
     in_stock: Mapped[bool] = mapped_column(default=True)
 
     added_by: Mapped["User"] = relationship()
+
+    def __repr__(self):
+        return f'{self.product_id}'

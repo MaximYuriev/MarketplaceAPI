@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
+from cache.cache import cache
 from dependencies.product import current_product, product_query_parameters, validate_create_product, \
     validate_update_product
 from dependencies.user import current_admin_user
@@ -53,6 +54,7 @@ async def delete_product(
 
 
 @product_router.get("/{product_id}")
+@cache(expire=60)
 async def get_product(
         product: Annotated[Product, Depends(current_product)],
 ):
@@ -63,6 +65,7 @@ async def get_product(
 
 
 @product_router.get("")
+@cache(expire=60)
 async def get_all_products(
         product_service: Annotated[ProductServices, Depends(ProductServices)],
         query_parameters: Annotated[dict, Depends(product_query_parameters)]
