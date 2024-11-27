@@ -1,10 +1,39 @@
+from typing import Annotated
+
 from fastapi import Depends
 
+from exceptions.product import ProductAlreadyExist, ProductNameNotUnique, ProductNotFound
+from schemas.product import ProductSchema, ProductUpdate
 from services.product import ProductServices
 
 
-async def current_product(product_id: int, product_services: ProductServices = Depends()):
-    return await product_services.get(product_id)
+async def current_product(
+        product_id: int,
+        product_services: ProductServices = Depends()
+):
+    product = await product_services.get(product_id=product_id)
+    if product is None:
+        raise ProductNotFound
+    return product
+
+
+async def validate_create_product(
+        product: ProductSchema,
+        product_service: Annotated[ProductServices, Depends(ProductServices)]
+):
+    if await product_service.get(name=product.name):
+        raise ProductAlreadyExist
+    return product
+
+
+async def validate_update_product(
+        product: ProductUpdate,
+        product_service: Annotated[ProductServices, Depends(ProductServices)]
+):
+    if product.name is not None:
+        if await product_service.get(name=product.name):
+            raise ProductNameNotUnique
+    return product
 
 
 def product_query_parameters(

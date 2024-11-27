@@ -37,6 +37,7 @@ class ProductRepository:
         return result.scalars().all()
 
     async def update(self, product: Product, product_data: dict) -> Product:
+        print(product_data)
         for key, value in product_data.items():
             setattr(product, key, value)
         await self.session.commit()

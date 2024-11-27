@@ -4,6 +4,7 @@ from schemas.user import UserOuterModel
 
 
 class ProductSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     name: str = Field(max_length=25)
     description: str
     price: int = Field(gt=0)

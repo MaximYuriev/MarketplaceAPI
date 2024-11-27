@@ -9,4 +9,4 @@ class ResponseModel(BaseModel):
 
 
 class ResponseProductModel(ResponseModel):
-    data: ProductSchema | ProductInfo | list[ProductInfo] | None = None
+    data: ProductSchema | ProductInfo | list[ProductInfo]
