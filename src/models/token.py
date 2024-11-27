@@ -4,7 +4,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
 from db import Base
-from models.user import User
+from .user import User
 
 
 class RefreshToken(Base):
