@@ -5,6 +5,16 @@ from annotated_types import MinLen, MaxLen
 from pydantic import BaseModel, EmailStr, Field, ConfigDict, field_validator
 
 
+class UserInnerModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    user_id: uuid.UUID | str
+    firstname: str
+    surname: str
+    email: str
+    password: str
+    user_role: int
+
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str

@@ -3,6 +3,7 @@ import uuid
 from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from watchfiles import awatch
 
 from db import get_session
 from models.user import User
@@ -24,7 +25,6 @@ class UserRepository:
         self.session.add(user)
         await self.session.flush()
         return user.user_id
-
 
     async def update(self, user: User, user_data: dict):
         for key, value in user_data.items():

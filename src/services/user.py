@@ -2,11 +2,12 @@ import uuid
 from typing import Annotated
 
 from fastapi import Depends
+from pydantic import EmailStr
 
 from auth import utils
 from exceptions.user import UserNotFound
 from models.user import User
-from schemas.user import UserCreate
+from schemas.user import UserCreate, UserOuterModel
 from unitofworks.user_basket_work import UserBasketWork
 
 
@@ -27,8 +28,11 @@ class UserServices:
             user = await self.uow.user_repository.get(user_id)
             if user is None:
                 raise UserNotFound
+            self.uow.session.expunge(user)
             return user
 
-    async def get_user_by_email(self, email: str):
+    async def get_user_by_email(self, email: EmailStr | str):
         async with self.uow:
-            return await self.uow.user_repository.get_user_by_params(email=email)
+            user = await self.uow.user_repository.get_user_by_params(email=email)
+            self.uow.session.expunge_all()
+            return user
