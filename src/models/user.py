@@ -1,7 +1,7 @@
 import uuid
 
 from sqlalchemy import ForeignKey, select
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db import Base, async_session
 
@@ -31,4 +31,6 @@ class User(Base):
     password: Mapped[str]
     user_role: Mapped[int] = mapped_column(ForeignKey(UserRole.role_id), default=2) #По умолчанию каждый пользователь
                                                                                     # не имеет прав администратора
+
+    basket: Mapped["Basket"] = relationship()
 

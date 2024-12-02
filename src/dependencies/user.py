@@ -16,10 +16,12 @@ async def validate_user(user_login: UserLogin, user_services: UserServices = Dep
             return user
     raise UserValidateError
 
+
 async def validate_email_unique(user_create: UserCreate, user_services: UserServices = Depends()):
     if await user_services.get_user_by_email(user_create.email):
         raise UserEmailNotUnique
     return user_create
+
 
 async def check_user_exist(payload: dict = Depends(current_token_payload),
                            user_services: UserServices = Depends()):
@@ -40,6 +42,7 @@ def current_admin_user(payload: dict = Depends(current_token_payload), user_exis
     if payload.get("role") == 2:
         raise UserAccessException
     return UserPayload.model_validate(payload, from_attributes=True)
+
 
 def current_user_for_refresh(payload: dict = Depends(current_token_payload_for_refresh)):
     token_type = payload.get('type')

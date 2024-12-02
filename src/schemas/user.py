@@ -31,6 +31,7 @@ class UserPayload(BaseModel):
     email: str
     name: str
     role_id: int = Field(validation_alias="role")
+    basket_id: int = Field(validation_alias="basket")
 
 
 class UserOuterModel(BaseModel):

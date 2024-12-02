@@ -9,7 +9,8 @@ from dependencies.user import validate_user, validate_email_unique
 from exceptions.token import TokenNotFound
 from models.user import User
 from schemas.response import ResponseModel
-from schemas.user import UserCreate, UserOuterModel, UserInnerModel
+from schemas.token import AccessTokenPayload
+from schemas.user import UserCreate
 from services.access_token import AccessTokenServices
 from services.refresh_token import RefreshTokenServices
 from services.user import UserServices
@@ -25,10 +26,12 @@ async def registration(
     await user_services.create_user(user_create)
     return ResponseModel(detail="Пользователь успешной зарегистрирован!")
 
+
 @auth_router.get("/get_user")
 async def get_user_by_email(email: str, user_services: UserServices = Depends()):
     user = await user_services.get_user_by_email(email)
-    return user
+    return AccessTokenPayload.model_validate(user, from_attributes=True)
+
 
 @auth_router.post("/login")
 async def login(
