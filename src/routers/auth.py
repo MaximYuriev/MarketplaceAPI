@@ -27,12 +27,6 @@ async def registration(
     return ResponseModel(detail="Пользователь успешной зарегистрирован!")
 
 
-@auth_router.get("/get_user")
-async def get_user_by_email(email: str, user_services: UserServices = Depends()):
-    user = await user_services.get_user_by_email(email)
-    return AccessTokenPayload.model_validate(user, from_attributes=True)
-
-
 @auth_router.post("/login")
 async def login(
         user: Annotated[User, Depends(validate_user)],
