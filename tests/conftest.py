@@ -11,6 +11,7 @@ from services.user import UserServices
 from settings import POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_HOST, POSTGRES_PORT, POSTGRES_DB
 from db import Base, get_session
 from src.main import app
+from unitofworks.user_basket_work import UserBasketWork
 
 db_url_test = f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 
@@ -30,7 +31,7 @@ async def create_roles():
 
 async def create_base_user():
     async with test_async_session() as session:
-        user_services = UserServices(user_repository=UserRepository(session))
+        user_services = UserServices(uow=UserBasketWork(session))
         user = UserCreate(
             email="user@test.com",
             password="password",
@@ -41,7 +42,7 @@ async def create_base_user():
 
 async def create_admin_user():
     async with test_async_session() as session:
-        user_services = UserServices(user_repository=UserRepository(session))
+        user_services = UserServices(uow=UserBasketWork(session))
         user = UserCreate(
             email="admin@test.com",
             password="password",

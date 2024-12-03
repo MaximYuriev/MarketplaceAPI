@@ -3,6 +3,7 @@ import uuid
 from pydantic import BaseModel, Field, computed_field, field_validator
 
 from auth.config import ACCESS_TOKEN_TYPE, REFRESH_TOKEN_TYPE
+from schemas.basket import BasketSchema
 
 
 class BaseTokenPayload(BaseModel):
@@ -26,8 +27,12 @@ class AccessTokenPayload(BaseTokenPayload):
     firstname: str = Field(exclude=True)
     surname: str = Field(exclude=True)
     role: int = Field(validation_alias="user_role")
+    basket_schema: BasketSchema = Field(exclude=True, validation_alias="basket")
 
     @computed_field
     def name(self) -> str:
         return f"{self.firstname} {self.surname}"
 
+    @computed_field
+    def basket(self) -> int:
+        return self.basket_schema.basket_id

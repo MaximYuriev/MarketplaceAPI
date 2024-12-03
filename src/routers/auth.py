@@ -9,12 +9,14 @@ from dependencies.user import validate_user, validate_email_unique
 from exceptions.token import TokenNotFound
 from models.user import User
 from schemas.response import ResponseModel
+from schemas.token import AccessTokenPayload
 from schemas.user import UserCreate
 from services.access_token import AccessTokenServices
 from services.refresh_token import RefreshTokenServices
 from services.user import UserServices
 
 auth_router = APIRouter(prefix="/auth", tags=["Auth"])
+
 
 @auth_router.post("/reg")
 async def registration(
@@ -24,9 +26,10 @@ async def registration(
     await user_services.create_user(user_create)
     return ResponseModel(detail="Пользователь успешной зарегистрирован!")
 
+
 @auth_router.post("/login")
 async def login(
-        user:Annotated[User, Depends(validate_user)],
+        user: Annotated[User, Depends(validate_user)],
         refresh_token_services: RefreshTokenServices = Depends(),
         access_token_services: AccessTokenServices = Depends()
 ):
@@ -42,6 +45,7 @@ async def login(
             await refresh_token_services.delete_token(refresh_token)
             await refresh_token_services.create_token(user)
     return ResponseModel(detail="Пользователь вошел в аккаунт!")
+
 
 @auth_router.get("/refresh")
 async def refresh_access_token(
