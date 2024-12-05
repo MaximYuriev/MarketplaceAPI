@@ -8,8 +8,8 @@ from db import Base
 
 class BasketProduct(Base):
     __tablename__ = "basket_product"
-    basket_id: Mapped[int] = mapped_column(ForeignKey("basket.basket_id"), primary_key=True)
-    product_id: Mapped[int] = mapped_column(ForeignKey("product.product_id"), primary_key=True)
+    basket_id: Mapped[int] = mapped_column(ForeignKey("basket.basket_id", ondelete="CASCADE"), primary_key=True)
+    product_id: Mapped[int] = mapped_column(ForeignKey("product.product_id", ondelete="CASCADE"), primary_key=True)
     product_count: Mapped[int] = mapped_column(default=1)
 
     product: Mapped["Product"] = relationship()
