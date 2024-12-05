@@ -1,16 +1,4 @@
-import pytest
 from httpx import AsyncClient
-
-
-@pytest.fixture
-def product():
-    product = {
-        "name": "string",
-        "description": "string",
-        "price": 1,
-        "quantity": 1
-    }
-    return product
 
 
 async def test_add_by_user(product: dict, client: AsyncClient, current_test_user: AsyncClient.cookies):
