@@ -1,3 +1,6 @@
+import uuid
+from typing import Sequence
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -26,3 +29,12 @@ class OrderRepository:
             .where(Order.order_id == order_id)
         )
         return await self.session.scalar(query)
+
+    async def get_all(self, user_id: str | uuid.UUID) -> Sequence[Order]:
+       query = (
+           select(Order)
+           .options(selectinload(Order.products).selectinload(OrderProduct.product))
+           .where(Order.user_id == user_id)
+       )
+       result = await self.session.scalars(query)
+       return result.all()

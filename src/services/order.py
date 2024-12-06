@@ -39,8 +39,14 @@ class OrderService:
             order.order_price = price
             await self.uow.commit()
 
-    async def get(self, order_id: int) -> Order | None:
+    async def get_one(self, order_id: int) -> Order | None:
         async with self.uow:
             order = await self.uow.order_repository.get(order_id)
             self.uow.session.expunge_all()
             return order
+
+    async def get_all(self, user_id: str | uuid.UUID) -> list[Order]:
+        async with self.uow:
+            orders = await self.uow.order_repository.get_all(user_id)
+            self.uow.session.expunge_all()
+            return orders

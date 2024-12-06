@@ -3,7 +3,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 
 from dependencies.user import current_user
-from schemas.response import ResponseModel
+from schemas.order import OuterOrderSchema
+from schemas.response import ResponseModel, OrderResponse
 from schemas.user import UserPayload
 from services.order import OrderService
 
@@ -15,7 +16,17 @@ async def get_order_info(
         order_id: int,
         order_service: Annotated[OrderService, Depends(OrderService)]
 ):
-    return await order_service.get(order_id)
+    order = await order_service.get_one(order_id)
+    return OrderResponse(detail="Найденный заказ:", data=order)
+
+
+@order_router.get("")
+async def get_all_orders_info(
+        user: Annotated[UserPayload, Depends(current_user)],
+        order_service: Annotated[OrderService, Depends(OrderService)]
+):
+    orders = await order_service.get_all(user.user_id)
+    return OrderResponse(detail="История заказов", data=orders)
 
 
 @order_router.post("")
