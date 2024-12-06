@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Sequence
 
 from fastapi import Depends
 from sqlalchemy import select
@@ -33,6 +33,11 @@ class BasketProductRepository:
     async def get_one_by_params(self, **kwargs) -> BasketProduct | None:
         query = select(BasketProduct).filter_by(**kwargs)
         return await self.session.scalar(query)
+
+    async def get_all_by_params(self, **kwargs) -> Sequence[BasketProduct]:
+        query = select(BasketProduct).options(selectinload(BasketProduct.product)).filter_by(**kwargs)
+        result = await self.session.execute(query)
+        return result.scalars().all()
 
     async def update(self, basket_product: BasketProduct, update_product_data: dict):
         for key, value in update_product_data.items():
