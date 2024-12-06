@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from models.order import Order
+from models.order import Order, OrderProduct
 
 
 class OrderRepository:
@@ -20,5 +20,9 @@ class OrderRepository:
             setattr(order, key, value)
 
     async def get(self, order_id: int) -> Order | None:
-        query = select(Order).options(selectinload(Order.products)).where(Order.order_id == order_id)
+        query = (
+            select(Order)
+            .options(selectinload(Order.products).selectinload(OrderProduct.product))
+            .where(Order.order_id == order_id)
+        )
         return await self.session.scalar(query)

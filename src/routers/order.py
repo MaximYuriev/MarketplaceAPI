@@ -23,5 +23,5 @@ async def make_order(
         user: Annotated[UserPayload, Depends(current_user)],
         order_service: Annotated[OrderService, Depends(OrderService)]
 ):
-    await order_service.create(user.basket_id)
+    await order_service.create(user.user_id, user.basket_id)
     return ResponseModel(detail="Заказ успешно сформирован!")
