@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends
 
 from dependencies.basket import products_on_basket
 from dependencies.user import current_user
+from exceptions.order import OrderNotFound
 from models.basket import Basket, BasketProduct
 from models.product import Product
 from schemas.response import ResponseModel, OrderResponse
@@ -19,6 +20,8 @@ async def get_order_info(
         order_service: Annotated[OrderService, Depends(OrderService)]
 ):
     order = await order_service.get_one(order_id)
+    if order is None:
+        raise OrderNotFound
     return OrderResponse(detail="Найденный заказ:", data=order)
 
 
