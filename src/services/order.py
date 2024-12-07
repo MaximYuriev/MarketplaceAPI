@@ -4,6 +4,7 @@ from typing import Annotated
 from fastapi import Depends, HTTPException
 
 from exceptions.product import ProductNotInStock, ProductQuantityException
+from models.basket import BasketProduct
 from models.order import Order
 from unitofworks.order_uow import OrderBasketWork
 
@@ -12,18 +13,15 @@ class OrderService:
     def __init__(self, uow: Annotated[OrderBasketWork, Depends(OrderBasketWork)]):
         self.uow = uow
 
-    async def create(self, user_id: str | uuid.UUID, basket_id: int):
+    async def create(self, user_id: str | uuid.UUID, products: list[BasketProduct]):
         async with self.uow:
-            products_on_basket = await self.uow.basket_product_repository.get_all_by_params(basket_id=basket_id)
-            if not products_on_basket:
-                raise HTTPException(status_code=404, detail="Корзина пуста!")
             price = 0
-            order = await self.uow.order_repository.create(user_id=user_id, order_price=0)
-            for one_product in products_on_basket:
+            order = await self.uow.order_repository.create(user_id=user_id, order_price=price)
+            for one_product in products:
                 if not one_product.product.in_stock:
-                    raise ProductNotInStock
+                    raise ProductNotInStock(one_product.product.name)
                 if one_product.product_count > one_product.product.quantity:
-                    raise ProductQuantityException
+                    raise ProductQuantityException(one_product.product.name)
                 product_on_order_price = one_product.product.price * one_product.product_count
                 price += product_on_order_price
                 one_product.product.quantity -= one_product.product_count

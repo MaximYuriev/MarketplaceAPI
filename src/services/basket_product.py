@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Sequence
 
 from fastapi import Depends
 
