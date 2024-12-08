@@ -5,7 +5,7 @@ from fastapi import Depends
 
 from models.product import Product
 from repositories.product import ProductRepository
-from schemas.product import ProductSchema, ProductUpdate, ProductInfo
+from schemas.product import ProductSchema, ProductUpdate
 
 
 class ProductServices:

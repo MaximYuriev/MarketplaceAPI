@@ -9,7 +9,6 @@ from dependencies.user import validate_user, validate_email_unique
 from exceptions.token import TokenNotFound
 from models.user import User
 from schemas.response import ResponseModel
-from schemas.token import AccessTokenPayload
 from schemas.user import UserCreate
 from services.access_token import AccessTokenServices
 from services.refresh_token import RefreshTokenServices

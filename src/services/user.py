@@ -7,7 +7,7 @@ from pydantic import EmailStr
 from auth import utils
 from exceptions.user import UserNotFound
 from models.user import User
-from schemas.user import UserCreate, UserOuterModel
+from schemas.user import UserCreate
 from unitofworks.user_basket_work import UserBasketWork
 
 
