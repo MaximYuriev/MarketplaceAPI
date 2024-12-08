@@ -10,6 +10,7 @@ from models.basket import BasketProduct
 from models.product import Product
 from schemas.basket import AddProductOnBasketSchema, UpdateProductOnBasketSchema
 from schemas.user import UserPayload
+from services.basket import BasketService
 from services.basket_product import BasketProductService
 from services.product import ProductServices
 
@@ -36,9 +37,9 @@ async def product_on_basket(
 
 async def products_on_basket(
         user: Annotated[UserPayload, Depends(current_user)],
-        basket_product_service: Annotated[BasketProductService, Depends(BasketProductService)],
+        basket_service: Annotated[BasketService, Depends(BasketService)],
 ) -> list[BasketProduct]:
-    basket = await basket_product_service.get_all_products_with_buy_flag(basket_id=user.basket_id, buy_in_next_order=True)
+    basket = await basket_service.get_all_products_with_buy_flag(basket_id=user.basket_id, buy_in_next_order=True)
     if basket is None or not basket.product_on_basket:
         raise BasketIsEmpty
     return basket.product_on_basket
