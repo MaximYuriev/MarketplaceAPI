@@ -12,11 +12,15 @@ class UserRepository:
         self.session = session
 
     async def get(self, user_id: uuid.UUID | str) -> User | None:
-        return await self.session.get(User, user_id, options=[selectinload(User.basket)])
+        user = await self.session.get(User, user_id, options=[selectinload(User.basket)])
+        self.session.expunge_all()
+        return user
 
-    async def get_user_by_params(self, **kwargs):
+    async def get_user_by_params(self, **kwargs) -> User | None:
         query = select(User).options(selectinload(User.basket)).filter_by(**kwargs)
-        return await self.session.scalar(query)
+        user = await self.session.scalar(query)
+        self.session.expunge_all()
+        return user
 
     async def create(self, user_data: dict) -> uuid.UUID:
         user = User(**user_data)

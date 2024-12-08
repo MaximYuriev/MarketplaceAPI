@@ -10,6 +10,7 @@ from models.basket import BasketProduct
 from schemas.basket import AddProductOnBasketSchema, UpdateProductOnBasketSchema
 from schemas.response import ResponseModel, BasketResponse
 from schemas.user import UserPayload
+from services.basket import BasketService
 from services.basket_product import BasketProductService
 
 basket_router = APIRouter(prefix="/basket", tags=["Basket"], dependencies=[Depends(current_user)])
@@ -30,10 +31,10 @@ async def add_product_on_basket(
 
 @basket_router.get("")
 async def get_all_product_on_basket(
-        basket_product_service: Annotated[BasketProductService, Depends(BasketProductService)],
+        basket_service: Annotated[BasketService, Depends(BasketService)],
         user: Annotated[UserPayload, Depends(current_user)]
 ):
-    basket = await basket_product_service.get_all_products(user.basket_id)
+    basket = await basket_service.get_all_products(user.basket_id)
     return BasketResponse(detail="Ваша корзина", data=basket)
 
 
@@ -53,4 +54,4 @@ async def delete_product_on_basket(
         basket_product_service: Annotated[BasketProductService, Depends(BasketProductService)]
 ):
     await basket_product_service.delete(basket_product)
-    return ResponseModel(detail="Товар успешно удален!")
+    return ResponseModel(detail="Товар успешно удален из корзины!")
