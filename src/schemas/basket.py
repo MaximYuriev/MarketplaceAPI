@@ -2,7 +2,7 @@ import uuid
 
 from pydantic import BaseModel, Field, ConfigDict
 
-from schemas.product import ProductInfo
+from schemas.product import ProductBriefInfo
 
 
 class BasketSchema(BaseModel):
@@ -16,14 +16,15 @@ class AddProductOnBasketSchema(BaseModel):
 
 
 class UpdateProductOnBasketSchema(BaseModel):
-    product_count: int = Field(gt=0, lt=20, default=1)
+    product_count: int | None = Field(gt=0, lt=20, default=None)
+    buy_in_next_order: bool | None = True
 
 
 class ProductOnBasketSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    product_id: int = Field(serialization_alias="productId")
+    product: ProductBriefInfo
     product_count: int = Field(serialization_alias="productCount")
-    product: ProductInfo
+    buy_in_next_order: bool = Field(serialization_alias="buyInNextOrder")
 
 
 class OuterBasketSchema(BaseModel):

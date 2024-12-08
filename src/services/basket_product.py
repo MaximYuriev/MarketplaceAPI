@@ -19,6 +19,13 @@ class BasketProductService:
     async def get_all_products(self, basket_id: int) -> Basket | None:
         return await self.repository.get_products(basket_id)
 
+    async def get_all_products_with_buy_flag(
+            self,
+            basket_id: int,
+            buy_in_next_order: bool = True
+    ) -> Basket | None:
+        return await self.repository.get_products_with_buy_flag(basket_id, buy_in_next_order)
+
     async def get_one(self, **kwargs) -> BasketProduct | None:
         return await self.repository.get_one_by_params(**kwargs)
 
