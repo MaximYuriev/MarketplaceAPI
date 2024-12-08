@@ -11,6 +11,7 @@ class BasketProduct(Base):
     basket_id: Mapped[int] = mapped_column(ForeignKey("basket.basket_id", ondelete="CASCADE"), primary_key=True)
     product_id: Mapped[int] = mapped_column(ForeignKey("product.product_id", ondelete="CASCADE"), primary_key=True)
     product_count: Mapped[int] = mapped_column(default=1)
+    buy_in_next_order: Mapped[bool] = mapped_column(default=True)
 
     product: Mapped["Product"] = relationship()
 

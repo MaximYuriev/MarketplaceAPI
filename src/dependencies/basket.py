@@ -38,8 +38,8 @@ async def products_on_basket(
         user: Annotated[UserPayload, Depends(current_user)],
         basket_product_service: Annotated[BasketProductService, Depends(BasketProductService)],
 ) -> list[BasketProduct]:
-    basket = await basket_product_service.get_all_products(basket_id=user.basket_id)
-    if not basket.product_on_basket:
+    basket = await basket_product_service.get_all_products_with_buy_flag(basket_id=user.basket_id, buy_in_next_order=True)
+    if basket is None or not basket.product_on_basket:
         raise BasketIsEmpty
     return basket.product_on_basket
 
@@ -61,7 +61,7 @@ async def validate_update_product_on_basket(
         updated_product_data: UpdateProductOnBasketSchema,
         product: Annotated[Product, Depends(current_product)],
 ) -> UpdateProductOnBasketSchema:
-    if updated_product_data.product_count > product.quantity:
+    if updated_product_data.product_count is not None and updated_product_data.product_count > product.quantity:
         raise ProductQuantityException(product.name)
 
     return updated_product_data
