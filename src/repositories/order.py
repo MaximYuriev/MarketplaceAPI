@@ -35,6 +35,7 @@ class OrderRepository:
            select(Order)
            .options(selectinload(Order.products).selectinload(OrderProduct.product))
            .where(Order.user_id == user_id)
+           .order_by(Order.created_at.desc())
        )
        result = await self.session.scalars(query)
        return result.all()
