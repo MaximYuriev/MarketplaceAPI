@@ -18,12 +18,15 @@ class ProductUpdate(ProductSchema):
     quantity: int | None = Field(gt=0, default=None)
 
 
-class ProductInfo(BaseModel):
+class ProductBriefInfo(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     product_id: int = Field(serialization_alias="productId")
     name: str
     description: str
     price: int
+
+
+class ProductInfo(ProductBriefInfo):
     quantity: int
     in_stock: bool = Field(serialization_alias="inStock")
     added_by: UserOuterModel | None = Field(serialization_alias="addedBy")

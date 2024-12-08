@@ -4,6 +4,7 @@ from fastapi import Depends
 
 from dependencies.product import current_product
 from dependencies.user import current_user
+from exceptions.basket import BasketIsEmpty
 from exceptions.product import ProductNotInStock, ProductQuantityException, ProductNotInBasket
 from models.basket import BasketProduct
 from models.product import Product
@@ -27,10 +28,20 @@ async def product_on_basket(
         user: Annotated[UserPayload, Depends(current_user)],
         basket_product_service: Annotated[BasketProductService, Depends(BasketProductService)]
 ) -> BasketProduct:
-    basket_product = await basket_product_service.get_one(basket_id = user.basket_id, product_id = product.product_id)
+    basket_product = await basket_product_service.get_one(basket_id=user.basket_id, product_id=product.product_id)
     if basket_product is None:
         raise ProductNotInBasket
     return basket_product
+
+
+async def products_on_basket(
+        user: Annotated[UserPayload, Depends(current_user)],
+        basket_product_service: Annotated[BasketProductService, Depends(BasketProductService)],
+) -> list[BasketProduct]:
+    basket = await basket_product_service.get_all_products(basket_id=user.basket_id)
+    if not basket.product_on_basket:
+        raise BasketIsEmpty
+    return basket.product_on_basket
 
 
 async def validate_add_product_on_basket(
@@ -38,10 +49,10 @@ async def validate_add_product_on_basket(
         product: Annotated[Product, Depends(current_added_product)]
 ) -> AddProductOnBasketSchema:
     if not product.in_stock:
-        raise ProductNotInStock
+        raise ProductNotInStock(product.name)
 
     if added_product_data.product_count > product.quantity:
-        raise ProductQuantityException
+        raise ProductQuantityException(product.name)
 
     return added_product_data
 
@@ -51,6 +62,6 @@ async def validate_update_product_on_basket(
         product: Annotated[Product, Depends(current_product)],
 ) -> UpdateProductOnBasketSchema:
     if updated_product_data.product_count > product.quantity:
-        raise ProductQuantityException
+        raise ProductQuantityException(product.name)
 
     return updated_product_data

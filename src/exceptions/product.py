@@ -17,15 +17,15 @@ class ProductNameNotUnique(HTTPException):
 
 
 class ProductNotInStock(HTTPException):
-    def __init__(self):
-        super().__init__(status_code=status.HTTP_400_BAD_REQUEST, detail="Товар не в наличии!")
+    def __init__(self, product_name: str = ""):
+        super().__init__(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Товар {product_name !r} не в наличии!")
 
 
 class ProductQuantityException(HTTPException):
-    def __init__(self):
+    def __init__(self, product_name: str = ""):
         super().__init__(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Количество добавляемого товара больше, чем имеется в наличии!"
+            detail=f"Количество добавляемого товара {product_name !r} больше, чем имеется в наличии!"
         )
 
 
