@@ -28,11 +28,9 @@ class UserServices:
             user = await self.uow.user_repository.get(user_id)
             if user is None:
                 raise UserNotFound
-            self.uow.session.expunge_all()
             return user
 
     async def get_user_by_email(self, email: EmailStr | str):
         async with self.uow:
             user = await self.uow.user_repository.get_user_by_params(email=email)
-            self.uow.session.expunge_all()
             return user
