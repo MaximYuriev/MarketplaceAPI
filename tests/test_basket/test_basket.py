@@ -26,4 +26,4 @@ async def test_delete_product_on_basket(product_on_basket, client: AsyncClient):
     response = await client.delete(f"/basket/{product_on_basket}")
     body = response.json()
     assert response.status_code == 200
-    assert body["detail"] == "Товар успешно удален!"
+    assert body["detail"] == "Товар успешно удален из корзины!"

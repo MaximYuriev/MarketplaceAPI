@@ -54,4 +54,4 @@ async def delete_product_on_basket(
         basket_product_service: Annotated[BasketProductService, Depends(BasketProductService)]
 ):
     await basket_product_service.delete(basket_product)
-    return ResponseModel(detail="Товар успешно удален!")
+    return ResponseModel(detail="Товар успешно удален из корзины!")
