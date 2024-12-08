@@ -5,8 +5,7 @@ from fastapi import APIRouter, Depends
 from dependencies.basket import products_on_basket
 from dependencies.user import current_user
 from exceptions.order import OrderNotFound
-from models.basket import Basket, BasketProduct
-from models.product import Product
+from models.basket import BasketProduct
 from schemas.response import ResponseModel, OrderResponse
 from schemas.user import UserPayload
 from services.order import OrderService

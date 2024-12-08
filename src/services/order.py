@@ -1,7 +1,7 @@
 import uuid
 from typing import Annotated
 
-from fastapi import Depends, HTTPException
+from fastapi import Depends
 
 from exceptions.product import ProductNotInStock, ProductQuantityException
 from models.basket import BasketProduct

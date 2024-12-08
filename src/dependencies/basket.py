@@ -6,7 +6,7 @@ from dependencies.product import current_product
 from dependencies.user import current_user
 from exceptions.basket import BasketIsEmpty
 from exceptions.product import ProductNotInStock, ProductQuantityException, ProductNotInBasket
-from models.basket import BasketProduct, Basket
+from models.basket import BasketProduct
 from models.product import Product
 from schemas.basket import AddProductOnBasketSchema, UpdateProductOnBasketSchema
 from schemas.user import UserPayload
