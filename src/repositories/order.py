@@ -28,14 +28,17 @@ class OrderRepository:
             .options(selectinload(Order.products).selectinload(OrderProduct.product))
             .where(Order.order_id == order_id)
         )
-        return await self.session.scalar(query)
+        order = await self.session.scalar(query)
+        self.session.expunge_all()
+        return order
 
     async def get_all(self, user_id: str | uuid.UUID) -> Sequence[Order]:
-       query = (
-           select(Order)
-           .options(selectinload(Order.products).selectinload(OrderProduct.product))
-           .where(Order.user_id == user_id)
-           .order_by(Order.created_at.desc())
-       )
-       result = await self.session.scalars(query)
-       return result.all()
+        query = (
+            select(Order)
+            .options(selectinload(Order.products).selectinload(OrderProduct.product))
+            .where(Order.user_id == user_id)
+            .order_by(Order.created_at.desc())
+        )
+        orders = await self.session.scalars(query)
+        self.session.expunge_all()
+        return orders.all()
