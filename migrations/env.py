@@ -10,6 +10,7 @@ from src.models.token import RefreshToken
 from src.models.product import Product
 from src.models.basket import Basket, BasketProduct
 from src.models.order import Order, OrderProduct
+from src.models.wallet import Wallet
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
