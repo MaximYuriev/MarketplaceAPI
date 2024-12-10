@@ -9,6 +9,7 @@ from routers.auth import auth_router
 from routers.product import product_router
 from routers.basket import basket_router
 from routers.order import order_router
+from routers.wallet import wallet_router
 
 
 @asynccontextmanager #При каждом запуске приложения будет происходить проверка на наличие нужных ролей в базе данных
@@ -21,6 +22,7 @@ app = FastAPI(title="Marketplace API", lifespan=lifespan)
 app.include_router(auth_router)
 app.include_router(product_router)
 app.include_router(user_router)
+app.include_router(wallet_router)
 app.include_router(basket_router)
 app.include_router(order_router)
 
