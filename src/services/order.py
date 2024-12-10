@@ -3,6 +3,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
+from exceptions.balance import ValueBalanceError
 from exceptions.product import ProductNotInStock, ProductQuantityException
 from models.basket import BasketProduct
 from models.order import Order
@@ -17,6 +18,7 @@ class OrderService:
         async with self.uow:
             price = 0
             order = await self.uow.order_repository.create(user_id=user_id, order_price=price)
+            wallet = await self.uow.wallet_repository.get(user_id)
             for one_product in products:
                 if not one_product.product.in_stock:
                     raise ProductNotInStock(one_product.product.name)
@@ -34,6 +36,8 @@ class OrderService:
                     product_on_order_price=product_on_order_price
                 )
                 await self.uow.session.delete(one_product)
+            if wallet.balance < price:
+                raise ValueBalanceError
             order.order_price = price
             await self.uow.commit()
 

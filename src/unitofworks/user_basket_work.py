@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db import get_session
 from repositories.basket import BasketRepository
 from repositories.user import UserRepository
+from repositories.wallet import WalletRepository
 
 
 class UserBasketWork:
@@ -15,6 +16,7 @@ class UserBasketWork:
     async def __aenter__(self):
         self.user_repository = UserRepository(self.session)
         self.basket_repository = BasketRepository(self.session)
+        self.wallet_repository = WalletRepository(self.session)
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.rollback()

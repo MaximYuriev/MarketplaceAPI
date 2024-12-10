@@ -33,4 +33,4 @@ class User(Base):
                                                                                     # не имеет прав администратора
 
     basket: Mapped["Basket"] = relationship()
-
+    wallet: Mapped["Wallet"] = relationship()

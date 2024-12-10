@@ -21,6 +21,7 @@ class UserServices:
         async with self.uow:
             user_id = await self.uow.user_repository.create(user_data)
             self.uow.basket_repository.create(user_id)
+            self.uow.wallet_repository.create(user_id)
             await self.uow.commit()
 
     async def get_user_by_id(self, user_id: uuid.UUID | str) -> User:

@@ -8,6 +8,7 @@ from repositories.basket_product import BasketProductRepository
 from repositories.order import OrderRepository
 from repositories.order_product import OrderProductRepository
 from repositories.product import ProductRepository
+from repositories.wallet import WalletRepository
 
 
 class OrderBasketWork:
@@ -19,6 +20,7 @@ class OrderBasketWork:
         self.order_product_repository = OrderProductRepository(self.session)
         self.basket_product_repository = BasketProductRepository(self.session)
         self.product_repository = ProductRepository(self.session)
+        self.wallet_repository = WalletRepository(self.session)
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.rollback()
