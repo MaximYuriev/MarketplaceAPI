@@ -1,8 +1,11 @@
 from contextlib import asynccontextmanager
+import sys
+from pathlib import Path
 
 from fastapi import FastAPI
 import uvicorn
 
+sys.path.append(str(Path(__file__).resolve().parent.parent))
 from models.user import UserRole
 from routers.user import user_router
 from routers.auth import auth_router
@@ -12,8 +15,8 @@ from routers.order import order_router
 from routers.wallet import wallet_router
 
 
-@asynccontextmanager #При каждом запуске приложения будет происходить проверка на наличие нужных ролей в базе данных
-async def lifespan(_:FastAPI):
+@asynccontextmanager  # При каждом запуске приложения будет происходить проверка на наличие нужных ролей в базе данных
+async def lifespan(_: FastAPI):
     await UserRole.create_default_roles()
     yield
 
