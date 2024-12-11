@@ -3,13 +3,15 @@ import hashlib
 
 from redis.asyncio import Redis
 
+from settings import REDIS_HOST, REDIS_PORT
+
 
 def cache(expire: int = 30):
     def decorator(func):
         @wraps(func)
         async def wrapper(*args, **kwargs):
             key = hashlib.md5(f'{func.__name__}:{args}:{kwargs}'.encode()).hexdigest()
-            async with Redis() as redis_session:
+            async with Redis(host=REDIS_HOST, port=REDIS_PORT) as redis_session:
                 result = await redis_session.get(key)
                 if result is None:
                     result = await func(*args, **kwargs)

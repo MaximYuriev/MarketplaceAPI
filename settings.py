@@ -18,3 +18,6 @@ PUBLIC_KEY_PATH=pathlib.Path(os.environ.get("PUBLIC_KEY_PATH"))
 CRYPT_ALGORITHM=os.environ.get("CRYPT_ALGORITHM")
 
 COOKIE_KEY=os.environ.get("COOKIE_KEY")
+
+REDIS_HOST=os.environ.get("REDIS_HOST")
+REDIS_PORT=os.environ.get("REDIS_PORT")
