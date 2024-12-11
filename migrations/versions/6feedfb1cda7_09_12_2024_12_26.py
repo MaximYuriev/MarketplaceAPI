@@ -1,7 +1,7 @@
 """09.12.2024 12:26
 
 Revision ID: 6feedfb1cda7
-Revises: 70a4ce145022
+Revises: 0d19e7fc99f0
 Create Date: 2024-12-09 12:26:28.736303
 
 """
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision: str = '6feedfb1cda7'
-down_revision: Union[str, None] = '70a4ce145022'
+down_revision: Union[str, None] = '0d19e7fc99f0'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
