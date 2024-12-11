@@ -46,3 +46,22 @@ class UserOuterModel(BaseModel):
         if isinstance(v, uuid.UUID):
             return str(v)
         raise ValueError("Тип объекта должен быть UUID")
+
+
+class UpdateUserSchema(BaseModel):
+    firstname: str | None = Field(default=None, min_length=3, max_length=20)
+    surname: str | None = Field(default=None, min_length=3, max_length=20)
+    email: EmailStr | None = None
+    password: str | None = Field(default=None, min_length=7, max_length=15)
+
+
+class AdminUpdateUserSchema(BaseModel):
+    user_role: int = Field(ge=1, le=2)
+
+
+class PrivateUserOuterSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    firstname: str
+    surname: str
+    email: str
+    role: str = Field(validation_alias="role_name")

@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import Depends
 
 from auth import utils
@@ -5,8 +7,17 @@ from auth.config import ACCESS_TOKEN_TYPE
 from dependencies.token import current_token_payload, current_token_payload_for_refresh
 from exceptions.token import TokenTypeException, TokenInvalidException
 from exceptions.user import UserAccessException, UserValidateError, UserEmailNotUnique
-from schemas.user import UserLogin, UserPayload, UserCreate
+from schemas.user import UserLogin, UserPayload, UserCreate, UpdateUserSchema
 from services.user import UserServices
+
+
+async def validate_email(
+        user: UserCreate | UpdateUserSchema,
+        user_service: UserServices
+) -> UserCreate | UpdateUserSchema:
+    if await user_service.get_user_by_email(user.email):
+        raise UserEmailNotUnique
+    return user
 
 
 async def validate_user(user_login: UserLogin, user_services: UserServices = Depends()):
@@ -18,9 +29,16 @@ async def validate_user(user_login: UserLogin, user_services: UserServices = Dep
 
 
 async def validate_email_unique(user_create: UserCreate, user_services: UserServices = Depends()):
-    if await user_services.get_user_by_email(user_create.email):
-        raise UserEmailNotUnique
-    return user_create
+    return await validate_email(user_create, user_services)
+
+
+async def validate_update_user(
+        user_update: UpdateUserSchema,
+        user_service: Annotated[UserServices, Depends(UserServices)]
+) -> UpdateUserSchema:
+    if user_update.email:
+        return await validate_email(user_update, user_service)
+    return user_update
 
 
 async def check_user_exist(payload: dict = Depends(current_token_payload),
